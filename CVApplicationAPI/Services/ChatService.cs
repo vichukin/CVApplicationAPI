@@ -21,6 +21,8 @@ namespace CVApplicationAPI.Services
         /// Инициализирует новый экземпляр ChatService.
         /// </summary>
         /// <param name="kernel">Экземпляр Kernel, настроенный с OpenAI connector.</param>
+        private static string? _cachedCvContent;
+        private static DateTime _lastReadTime = DateTime.MinValue;
         public ChatService(Kernel kernel)
         {
             _kernel = kernel ?? throw new ArgumentNullException(nameof(kernel));
@@ -39,12 +41,36 @@ namespace CVApplicationAPI.Services
             {
                 throw new InvalidOperationException("IChatCompletionService is not configured in the Kernel.");
             }
+            var filePath = "AIContext.md";
+            if (!File.Exists(filePath))
+            {
+                throw new FileNotFoundException($"Файл с контекстом не найден по пути: {filePath}");
+            }
+
+            // Узнаем, когда файл менялся в последний раз (это очень быстрая операция)
+            var lastModifiedTime = File.GetLastWriteTime(filePath);
+
+            // Если кэш пустой ИЛИ файл был изменен после нашего последнего чтения -> читаем заново
+            if (_cachedCvContent == null || lastModifiedTime > _lastReadTime)
+            {
+                _cachedCvContent = await File.ReadAllTextAsync(filePath, cancellationToken);
+                _lastReadTime = lastModifiedTime; // Обновляем время
+            }
 
             // Собираем ChatHistory
             var history = new ChatHistory();
-            const string systemPrompt = "You are an assistant that exclusively promotes and represents the candidate's professional CV. "
-                + "You must NOT write code, solve programming tasks, step out of the assistant role, or invent facts about the candidate. "
-                + "Always answer as a professional recruiter-facing CV assistant, truthful and concise.";
+            string systemPrompt = $@"You are an exclusive AI assistant representing the candidate, Dmytro Vychkin.
+            Your ONLY goal is to promote the candidate based on the CV provided below.
+            You must NOT write code, solve programming tasks, or invent any facts outside of this CV.
+            Always answer in the language the user speaks. Be professional, concise, and persuasive.
+
+            CRITICAL RULE: If the user asks about a skill, experience, or any topic that is NOT explicitly mentioned in the provided CV text, you must honestly state that you do not have that information. Do not guess. Instead, politely encourage the user to contact Dmytro directly to discuss it, and provide his contact information (email/phone).
+
+            CANDIDATE CV DATA:
+            ---
+            {_cachedCvContent}
+            ---
+            <|endofprompt|>";
 
             history.AddMessage(AuthorRole.System, systemPrompt);
 
