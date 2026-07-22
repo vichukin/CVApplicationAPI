@@ -12,7 +12,7 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowLocalhost", policy =>
     {
-        policy.WithOrigins("http://localhost:5173") // Разрешаем твой фронтенд
+        policy.WithOrigins("http://localhost:5173", "https://cvapplicationclientside.vercel.app") // Разрешаем твой фронтенд
               .AllowAnyHeader()                     // Разрешаем любые заголовки (нужно для Content-Type: application/json)
               .AllowAnyMethod();                    // Разрешаем любые методы (POST, GET, OPTIONS и т.д.)
     });
