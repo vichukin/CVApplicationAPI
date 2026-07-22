@@ -53,7 +53,7 @@ builder.Services.AddSingleton<Kernel>(sp =>
 // Register application services
 builder.Services.AddScoped<CVApplicationAPI.Services.IChatService, CVApplicationAPI.Services.ChatService>();
 
-Console.WriteLine($"[DEBUG-CONFIG] Links:AIContext = '{builder.Configuration["Links:AIContext"]}'");
+//Console.WriteLine($"[DEBUG-CONFIG] Links:AIContext = '{builder.Configuration["Links:AIContext"]}'");
 
 var app = builder.Build();
 

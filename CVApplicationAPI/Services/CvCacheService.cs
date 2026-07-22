@@ -23,7 +23,8 @@ namespace CVApplicationAPI.Services
 
             // Read the AI Context URL from configuration (e.g., user secrets or appsettings.json)
             // Expected path: configuration["Links:AIContext"]
-            _fileUrl = configuration["Links:AIContext"] 
+            _fileUrl = configuration["Links:AIContext"]
+                ?? Environment.GetEnvironmentVariable("Links__AIContext")
                 ?? throw new InvalidOperationException("Configuration key 'Links:AIContext' is missing. Ensure it is set in user secrets or appsettings.json");
         }
 
