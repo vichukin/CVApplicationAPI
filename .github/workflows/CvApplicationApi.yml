@@ -1,39 +1,50 @@
-name: Сборка и развертывание приложения .NET Core в веб-приложение CvApplicationApi
+name: Сборка и развертывание приложения .NET Core в веб-приложение
+
 on:
   push:
     branches:
-    - master
+      - master
+
 permissions:
   id-token: write
   contents: read
+
 env:
   AZURE_WEBAPP_NAME: CvApplicationApi
   AZURE_WEBAPP_PACKAGE_PATH: './publish'
   CONFIGURATION: Release
   DOTNET_CORE_VERSION: 10.0.x
   WORKING_DIRECTORY: CVApplicationAPI
+
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
+    
     - name: Setup .NET SDK
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: ${{ env.DOTNET_CORE_VERSION }}
+        
     - name: Restore
       run: dotnet restore "${{ env.WORKING_DIRECTORY }}"
+      
     - name: Build
       run: dotnet build "${{ env.WORKING_DIRECTORY }}" --configuration ${{ env.CONFIGURATION }} --no-restore
+      
     - name: Test
       run: dotnet test "${{ env.WORKING_DIRECTORY }}" --no-build
+      
     - name: Publish
       run: dotnet publish "${{ env.WORKING_DIRECTORY }}" --configuration ${{ env.CONFIGURATION }} --no-build --output "${{ env.AZURE_WEBAPP_PACKAGE_PATH }}"
+      
     - name: Publish Artifacts
       uses: actions/upload-artifact@v4
       with:
         name: webapp
         path: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
+
   deploy:
     runs-on: ubuntu-latest
     needs: build
@@ -43,19 +54,10 @@ jobs:
       with:
         name: webapp
         path: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
+        
     - name: Deploy to Azure WebApp
-      uses: azure/webapps-deploy@v2
+      uses: azure/webapps-deploy@v3
       with:
-        app-name: 'CvApplicationApi'
+        app-name: ${{ env.AZURE_WEBAPP_NAME }}
         publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE }}
         package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
-      # uses: azure/login@v2
-      # with:
-      #   client-id: ${{ vars.CvApplicationApi_CLIENT_ID_8A7E }}
-      #   tenant-id: ${{ vars.CvApplicationApi_TENANT_ID_8A7E }}
-      #   subscription-id: ${{ vars.CvApplicationApi_SUBSCRIPTION_ID_8A7E }}
-    # - name: Deploy to Azure WebApp
-    #   uses: azure/webapps-deploy@v2
-    #   with:
-    #     app-name: ${{ env.AZURE_WEBAPP_NAME }}
-    #     package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
