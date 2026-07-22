@@ -1,3 +1,4 @@
+using CVApplicationAPI.Services;
 using Microsoft.Extensions.Options;
 using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.Connectors.OpenAI;
@@ -18,6 +19,15 @@ builder.Services.AddCors(options =>
 });
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
+
+// Register HttpClientFactory for HTTP operations (used by CvCacheService and CvRefreshWorker)
+builder.Services.AddHttpClient();
+
+// Register CV Cache Service as a singleton for lazy-loaded in-memory caching
+builder.Services.AddSingleton<CvCacheService>();
+
+// Register the background refresh worker as a hosted service
+builder.Services.AddHostedService<CVApplicationAPI.Services.CvRefreshWorker>();
 
 // Bind OpenAI settings from configuration (section: "OpenAI"). Optional.
 builder.Services.Configure<OpenAISettings>(builder.Configuration.GetSection("OpenAI"));
