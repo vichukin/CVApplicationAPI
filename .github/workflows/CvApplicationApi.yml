@@ -44,11 +44,16 @@ jobs:
         name: webapp
         path: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
     - name: Azure Login
-      uses: azure/login@v2
+      uses: azure/webapps-deploy@v3 # или v2, в зависимости от твоей версии
       with:
-        client-id: ${{ vars.CvApplicationApi_CLIENT_ID_8A7E }}
-        tenant-id: ${{ vars.CvApplicationApi_TENANT_ID_8A7E }}
-        subscription-id: ${{ vars.CvApplicationApi_SUBSCRIPTION_ID_8A7E }}
+        app-name: 'CvApplicationApi'
+        publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE }}
+        package: '.'
+      # uses: azure/login@v2
+      # with:
+      #   client-id: ${{ vars.CvApplicationApi_CLIENT_ID_8A7E }}
+      #   tenant-id: ${{ vars.CvApplicationApi_TENANT_ID_8A7E }}
+      #   subscription-id: ${{ vars.CvApplicationApi_SUBSCRIPTION_ID_8A7E }}
     - name: Deploy to Azure WebApp
       uses: azure/webapps-deploy@v2
       with:
