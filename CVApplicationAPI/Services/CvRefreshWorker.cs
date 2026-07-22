@@ -35,7 +35,7 @@ namespace CVApplicationAPI.Services
                 ?? configuration?["AIContext"]
                 ?? Environment.GetEnvironmentVariable("Links__AIContext")
                 ?? Environment.GetEnvironmentVariable("APPSETTING_Links__AIContext")
-                ?? throw new InvalidOperationException("Configuration key 'Links:AIContext' is missing. Ensure it is set in user secrets or appsettings.json");
+                ?? throw new InvalidOperationException("Zalupa");
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
