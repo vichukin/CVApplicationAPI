@@ -8,7 +8,7 @@ permissions:
   contents: read
 env:
   AZURE_WEBAPP_NAME: CvApplicationApi
-  AZURE_WEBAPP_PACKAGE_PATH: /publish
+  AZURE_WEBAPP_PACKAGE_PATH: './publish'
   CONFIGURATION: Release
   DOTNET_CORE_VERSION: 10.0.x
   WORKING_DIRECTORY: CVApplicationAPI
