@@ -44,7 +44,7 @@ jobs:
         name: webapp
         path: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
     - name: Deploy to Azure WebApp
-      uses: azure/webapps-deploy@v2 # или v2, в зависимости от твоей версии
+      uses: azure/webapps-deploy@v2
       with:
         app-name: 'CvApplicationApi'
         publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE }}
