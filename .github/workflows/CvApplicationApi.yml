@@ -48,7 +48,7 @@ jobs:
       with:
         app-name: 'CvApplicationApi'
         publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE }}
-        package: './publish'
+        package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
       # uses: azure/login@v2
       # with:
       #   client-id: ${{ vars.CvApplicationApi_CLIENT_ID_8A7E }}
