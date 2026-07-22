@@ -5,19 +5,6 @@ using Microsoft.SemanticKernel.Connectors.OpenAI;
 
 var builder = WebApplication.CreateBuilder(args);
 
-Console.WriteLine("=== DUMPING ALL ENVIRONMENT VARIABLES ===");
-foreach (System.Collections.DictionaryEntry env in Environment.GetEnvironmentVariables())
-{
-    var key = env.Key.ToString();
-    // Фильтруем, чтобы не выводить сотни системных переменных, ищем только наши
-    if (key.Contains("AIContext") || key.Contains("OpenAI") || key.Contains("APPSETTING"))
-    {
-        Console.WriteLine($"FOUND ENV: {key} = '{env.Value}'");
-    }
-}
-Console.WriteLine($"Configuration Provider test: {builder.Configuration["AIContext"]}");
-Console.WriteLine("=== END DUMP ===");
-
 // Add services to the container.
 builder.Services.AddControllers();
 
